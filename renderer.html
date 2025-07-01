@@ -296,19 +296,33 @@
         function setupSmartAmountInput() {
             const amountInput = document.getElementById('amountInput');
             
-            amountInput.addEventListener('input', function(e) {
-                const value = e.target.value;
-                
-                // Auto-comma logic: if user types "0" and field is empty or just "0"
-                if (value === '0' || (value.length === 1 && value === '0')) {
-                    // Add comma automatically for decimal input
+            amountInput.addEventListener('keydown', function(e) {
+                // Check if user is typing "0" in empty field or field with just "0"
+                if (e.key === '0') {
+                    const currentValue = e.target.value;
+                    const cursorPosition = e.target.selectionStart;
+                    
+                    // If field is empty or user is at the beginning and field contains "0"
+                    if (currentValue === '' || (currentValue === '0' && cursorPosition === 1)) {
+                        e.preventDefault(); // Stop the "0" from being typed
+                        e.target.value = '0.';
+                        // Set cursor after the decimal point
+                        setTimeout(() => {
+                            e.target.setSelectionRange(2, 2);
+                        }, 0);
+                    }
+                }
+            });
+            
+            // Also handle paste events for "0"
+            amountInput.addEventListener('paste', function(e) {
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                if (pastedText === '0' && e.target.value === '') {
+                    e.preventDefault();
+                    e.target.value = '0.';
                     setTimeout(() => {
-                        if (e.target.value === '0') {
-                            e.target.value = '0.';
-                            // Move cursor to end
-                            e.target.setSelectionRange(e.target.value.length, e.target.value.length);
-                        }
-                    }, 50);
+                        e.target.setSelectionRange(2, 2);
+                    }, 0);
                 }
             });
             
