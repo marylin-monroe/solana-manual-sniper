@@ -277,12 +277,18 @@
             // Parallel initialization
             Promise.all([
                 updateBalance(),
-                updateSolPrice(),
+                updateSolPrice(), // This will log SOL price
                 loadOwnedTokens(),
                 setupUltraFastHotkeys(),
                 setupSmartAmountInput()
             ]).then(() => {
                 log('Ultra-Fast UI Ready', 'success');
+                // Show SOL price immediately on startup
+                setTimeout(() => {
+                    if (solPrice > 0) {
+                        log(`SOL = ${solPrice.toFixed(2)}`, 'info');
+                    }
+                }, 1000);
                 focusInput();
             });
             
@@ -296,32 +302,19 @@
         function setupSmartAmountInput() {
             const amountInput = document.getElementById('amountInput');
             
-            amountInput.addEventListener('keydown', function(e) {
-                // Check if user is typing "0" in empty field or field with just "0"
-                if (e.key === '0') {
-                    const currentValue = e.target.value;
-                    const cursorPosition = e.target.selectionStart;
+            amountInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                
+                // Auto-decimal logic: if user types "012", "015", "022" etc.
+                // Convert to "0.12", "0.15", "0.22" etc.
+                if (/^0\d+$/.test(value) && value.length >= 2) {
+                    // Pattern: starts with 0 followed by digits, length >= 2
+                    const newValue = '0.' + value.substring(1);
+                    e.target.value = newValue;
                     
-                    // If field is empty or user is at the beginning and field contains "0"
-                    if (currentValue === '' || (currentValue === '0' && cursorPosition === 1)) {
-                        e.preventDefault(); // Stop the "0" from being typed
-                        e.target.value = '0.';
-                        // Set cursor after the decimal point
-                        setTimeout(() => {
-                            e.target.setSelectionRange(2, 2);
-                        }, 0);
-                    }
-                }
-            });
-            
-            // Also handle paste events for "0"
-            amountInput.addEventListener('paste', function(e) {
-                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                if (pastedText === '0' && e.target.value === '') {
-                    e.preventDefault();
-                    e.target.value = '0.';
+                    // Set cursor to end
                     setTimeout(() => {
-                        e.target.setSelectionRange(2, 2);
+                        e.target.setSelectionRange(newValue.length, newValue.length);
                     }, 0);
                 }
             });
@@ -337,6 +330,12 @@
                         e.preventDefault();
                         instantAnalyze();
                         e.target.blur(); // Exit input field for faster buy access
+                    }
+                    // 🔥 ДОБАВЛЕНО: Exit amount input on Enter for faster [B] access
+                    if (e.key === 'Enter' && e.target.id === 'amountInput') {
+                        e.preventDefault();
+                        e.target.blur(); // Exit amount field for instant [B] hotkey access
+                        log('Amount set, ready for [B] buy', 'info');
                     }
                     return;
                 }
@@ -616,6 +615,7 @@
                 .then(function(response) { return response.json(); })
                 .then(function(data) {
                     solPrice = data.solana.usd;
+                    log(`SOL = ${solPrice.toFixed(2)}`, 'info'); // 🔥 ДОБАВЛЕНО: логирование цены SOL
                     updateTradeValue();
                 })
                 .catch(function(error) {
@@ -949,7 +949,13 @@
         
         // Updates with intervals for performance
         setInterval(updateBalance, 30000);
-        setInterval(updateSolPrice, 300000); // 5 minutes
+        setInterval(function() {
+            updateSolPrice().then(price => {
+                if (price > 0) {
+                    log(`SOL = ${price.toFixed(2)}`, 'info');
+                }
+            });
+        }, 300000); // 5 minutes
         
         // Auto-sync every 3 minutes
         setInterval(function() {
