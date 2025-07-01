@@ -5,38 +5,47 @@
     <title>SOL-SNIP by K</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Consolas', monospace; background: #1a1a1a; color: #fff; padding: 10px; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d2d2d; border-radius: 5px; margin-bottom: 10px; }
+        body { font-family: 'Consolas', monospace; background: #000; color: #fff; padding: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #111; border-radius: 5px; margin-bottom: 10px; }
         .balance { font-size: 18px; color: #4ade80; }
         
-        /* 🚀 SPEED INDICATOR */
+        /* Speed Indicator */
         .speed-indicator {
             position: absolute;
             top: 5px;
             right: 5px;
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid #4ade80;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ccc;
             border-radius: 3px;
             padding: 3px 6px;
             font-size: 10px;
-            color: #4ade80;
+            color: #ccc;
         }
         
         .main-input { display: flex; gap: 10px; margin-bottom: 10px; }
         .token-input { 
             flex: 1; 
             padding: 12px; 
-            background: #2d2d2d; 
-            border: 1px solid #444; 
+            background: #111; 
+            border: 1px solid #333; 
             border-radius: 5px; 
             color: #fff; 
             font-size: 14px;
             transition: border-color 0.2s ease;
         }
-        .token-input:focus { outline: none; border-color: #4ade80; box-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
+        .token-input:focus { outline: none; border-color: #666; box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); }
         .amount-container { display: flex; align-items: center; gap: 8px; min-width: 140px; }
-        .amount-input { width: 80px; padding: 12px; background: #2d2d2d; border: 1px solid #444; border-radius: 5px; color: #fff; text-align: center; }
-        .amount-input:focus { outline: none; border-color: #4ade80; }
+        .amount-input { 
+            width: 80px; 
+            padding: 12px; 
+            background: #111; 
+            border: 1px solid #333; 
+            border-radius: 5px; 
+            color: #fff; 
+            text-align: center;
+            transition: border-color 0.2s ease;
+        }
+        .amount-input:focus { outline: none; border-color: #666; box-shadow: 0 0 5px rgba(255, 255, 255, 0.1); }
         
         .btn { 
             padding: 12px 20px; 
@@ -47,17 +56,13 @@
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
+            background: #222;
+            color: #ccc;
         }
-        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+        .btn:hover { opacity: 0.8; transform: translateY(-1px); background: #333; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-analyze { background: #3b82f6; color: white; }
-        .btn-buy { background: #10b981; color: white; }
-        .btn-skip { background: #6b7280; color: white; }
-        .btn-charts { background: #f59e0b; color: white; }
-        .btn-sell { background: #ef4444; color: white; padding: 8px 12px; font-size: 12px; }
-        .btn-sync { background: #8b5cf6; color: white; padding: 6px 10px; font-size: 11px; }
         
-        /* 🔥 LOADING ANIMATION */
+        /* Loading Animation */
         .btn.loading::after {
             content: '';
             position: absolute;
@@ -65,7 +70,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
             animation: loading 1s infinite;
         }
         
@@ -74,24 +79,24 @@
             100% { left: 100%; }
         }
         
-        .results { background: #2d2d2d; border-radius: 5px; padding: 15px; margin-bottom: 10px; min-height: 200px; position: relative; }
-        .analysis { border-left: 4px solid #4ade80; padding-left: 15px; }
+        .results { background: #111; border-radius: 5px; padding: 15px; margin-bottom: 10px; min-height: 200px; position: relative; }
+        .analysis { border-left: 4px solid #666; padding-left: 15px; }
         .analysis.warning { border-left-color: #f59e0b; }
         .analysis.danger { border-left-color: #ef4444; }
         .quick-stats { display: flex; justify-content: space-between; margin: 10px 0; font-size: 12px; }
         .stat { text-align: center; }
-        .stat-value { font-size: 16px; font-weight: bold; color: #4ade80; }
+        .stat-value { font-size: 16px; font-weight: bold; color: #ccc; }
         .score.high { color: #4ade80; }
         .score.medium { color: #f59e0b; }
         .score.low { color: #ef4444; }
         .actions { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .warnings { background: #451a03; border: 1px solid #92400e; border-radius: 3px; padding: 8px; margin: 10px 0; font-size: 12px; }
+        .warnings { background: #222; border: 1px solid #444; border-radius: 3px; padding: 8px; margin: 10px 0; font-size: 12px; }
         .warnings ul { list-style: none; padding-left: 10px; }
-        .warnings li:before { content: "⚠️ "; }
+        .warnings li:before { content: "! "; color: #f59e0b; }
         
-        /* 🎮 HOTKEY BUTTONS */
+        /* Minimal Hotkey Panel */
         .hotkey-panel {
-            background: #374151;
+            background: #111;
             border-radius: 5px;
             padding: 10px;
             margin-bottom: 10px;
@@ -101,9 +106,9 @@
         }
         
         .hotkey-btn {
-            background: linear-gradient(135deg, #4ade80, #059669);
-            color: white;
-            border: none;
+            background: #222;
+            color: #ccc;
+            border: 1px solid #333;
             padding: 10px 8px;
             border-radius: 4px;
             font-weight: bold;
@@ -114,44 +119,44 @@
         }
         
         .hotkey-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(74, 222, 128, 0.3);
+            background: #333;
+            border-color: #444;
+            transform: translateY(-1px);
         }
         
-        .hotkey-btn.buy1 { background: linear-gradient(135deg, #10b981, #059669); }
-        .hotkey-btn.buy2 { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .hotkey-btn.buy3 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .hotkey-btn.analyze { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        
-        .log { background: #1a1a1a; border: 1px solid #444; border-radius: 5px; padding: 10px; height: 150px; overflow-y: auto; font-size: 12px; line-height: 1.4; user-select: text; cursor: text; }
+        .log { background: #000; border: 1px solid #333; border-radius: 5px; padding: 10px; height: 150px; overflow-y: auto; font-size: 12px; line-height: 1.4; user-select: text; cursor: text; }
         .log-entry { margin-bottom: 2px; word-wrap: break-word; }
         .log-entry.success { color: #4ade80; }
         .log-entry.error { color: #ef4444; }
         .log-entry.warning { color: #f59e0b; }
         .log-entry.info { color: #60a5fa; }
         
-        /* 📊 PORTFOLIO */
-        .token-card { background: #1a1a1a; border: 1px solid #444; border-radius: 5px; padding: 15px; margin-bottom: 10px; position: relative; }
-        .token-card:hover { border-color: #4ade80; }
+        /* Portfolio */
+        .token-card { background: #111; border: 1px solid #333; border-radius: 5px; padding: 15px; margin-bottom: 10px; position: relative; }
+        .token-card:hover { border-color: #444; }
         .token-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .token-stats { display: flex; justify-content: space-between; margin: 10px 0; font-size: 12px; }
         .profit-positive { color: #4ade80; }
         .profit-negative { color: #ef4444; }
         .sell-buttons { display: flex; gap: 8px; margin-top: 10px; }
-        .token-balance { position: absolute; top: 5px; right: 5px; font-size: 10px; color: #6b7280; }
+        .btn-sell { background: #222; color: #ccc; border: 1px solid #333; padding: 8px 12px; font-size: 12px; border-radius: 3px; cursor: pointer; }
+        .btn-sell:hover { background: #333; border-color: #444; }
+        .btn-sync { background: #222; color: #ccc; border: 1px solid #333; padding: 6px 10px; font-size: 11px; border-radius: 3px; cursor: pointer; }
+        .btn-sync:hover { background: #333; }
+        .token-balance { position: absolute; top: 5px; right: 5px; font-size: 10px; color: #666; }
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
-        /* 🎯 PERFORMANCE STATS */
+        /* Performance Stats */
         .performance-stats {
             position: fixed;
             bottom: 10px;
             right: 10px;
-            background: rgba(26, 26, 26, 0.9);
-            border: 1px solid #444;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #333;
             border-radius: 5px;
             padding: 8px;
             font-size: 10px;
-            color: #9ca3af;
+            color: #666;
             backdrop-filter: blur(5px);
         }
         
@@ -159,15 +164,16 @@
             position: fixed; 
             bottom: 10px; 
             left: 10px; 
-            background: #374151; 
+            background: #111; 
+            border: 1px solid #333;
             padding: 8px; 
             border-radius: 5px; 
             font-size: 10px; 
-            color: #9ca3af;
+            color: #666;
             max-width: 300px;
         }
         
-        /* 🚀 SPEED OPTIMIZATIONS */
+        /* Animations */
         .fade-in {
             animation: fadeIn 0.3s ease-in;
         }
@@ -176,37 +182,27 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h2>🎯 Solana Sniper - Ultra-Fast Edition</h2>
-        <div class="balance" id="balance">💰 Loading...</div>
-        <div class="speed-indicator" id="speedIndicator">⚡ Ready</div>
+        <h2>Solana Sniper</h2>
+        <div class="balance" id="balance">Loading...</div>
+        <div class="speed-indicator" id="speedIndicator">Ready</div>
     </div>
     
-    <!-- 🎮 HOTKEY PANEL для мгновенных сделок -->
+    <!-- Minimal Hotkey Panel -->
     <div class="hotkey-panel">
-        <button class="hotkey-btn buy1" onclick="instantBuy()" title="B - Quick Buy">
+        <button class="hotkey-btn" onclick="instantBuy()" title="B - Quick Buy">
             [B] BUY
         </button>
-        <button class="hotkey-btn buy2" onclick="quickSell()" title="S - Quick Sell">
+        <button class="hotkey-btn" onclick="quickSell()" title="S - Quick Sell">
             [S] SELL
         </button>
-        <button class="hotkey-btn buy3" onclick="openCharts()" title="F - Open Charts">
+        <button class="hotkey-btn" onclick="openCharts()" title="F - Open Charts">
             [F] CHARTS
         </button>
-        <button class="hotkey-btn analyze" onclick="instantAnalyze()" title="Enter - Analyze">
+        <button class="hotkey-btn" onclick="instantAnalyze()" title="Enter - Analyze">
             [Enter] ANALYZE
         </button>
     </div>
@@ -215,57 +211,57 @@
         <input type="text" class="token-input" id="tokenInput" placeholder="Paste token address here..." />
         <div class="amount-container">
             <input type="number" class="amount-input" id="amountInput" value="0.1" step="0.01" min="0" />
-            <span id="tradeValue" style="color: #f59e0b; font-size: 11px; font-weight: bold;">~$0</span>
+            <span id="tradeValue" style="color: #666; font-size: 11px; font-weight: bold;">~$0</span>
         </div>
-        <button class="btn btn-analyze" id="analyzeBtn">ANALYZE</button>
+        <button class="btn" id="analyzeBtn">ANALYZE</button>
     </div>
     
     <div class="results" id="results">
-        <div style="text-align: center; color: #6b7280; margin-top: 80px;">
-            <p>🚀 Ultra-Fast Engine Ready</p>
-            <p style="margin-top: 5px; font-size: 12px;">Paste token address and hit ENTER or use hotkeys B/S/F</p>
+        <div style="text-align: center; color: #666; margin-top: 80px;">
+            <p>Ultra-Fast Engine Ready</p>
+            <p style="margin-top: 5px; font-size: 12px;">Paste token address and hit ENTER or use hotkeys</p>
             <p style="margin-top: 5px; font-size: 10px; color: #4ade80;">Target: &lt;1.5s execution time</p>
         </div>
     </div>
     
-    <div id="ownedTokens" style="display: none; background: #2d2d2d; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
+    <div id="ownedTokens" style="display: none; background: #111; border-radius: 5px; padding: 15px; margin-bottom: 10px;">
         <div class="portfolio-header">
-            <h3 style="color: #4ade80;">OWNED TOKENS</h3>
-            <button class="btn-sync" onclick="syncPortfolio()">🔄 SYNC</button>
+            <h3 style="color: #ccc;">OWNED TOKENS</h3>
+            <button class="btn-sync" onclick="syncPortfolio()">SYNC</button>
         </div>
         <div id="tokensList"></div>
     </div>
     
     <div class="log" id="log">
-        <div class="log-entry info">[SYSTEM] ⚡ Ultra-Fast Sniper ready. Target execution: &lt;1.5s</div>
+        <div class="log-entry info">[SYSTEM] Ultra-Fast Sniper ready. Target execution: &lt;1.5s</div>
         <div class="log-entry success">[ENGINE] All services preloaded and optimized</div>
-        <div class="log-entry info">[HOTKEYS] B=Buy | S=Sell | F=Charts | Enter=Analyze | 1-4=Sell%</div>
+        <div class="log-entry info">[HOTKEYS] B=Buy | S=Sell | F=Charts | Enter=Analyze | Q=Amount | 1-4=Sell%</div>
     </div>
     
-    <!-- 🎯 PERFORMANCE STATS -->
+    <!-- Performance Stats -->
     <div class="performance-stats" id="performanceStats">
-        <div>🚀 Engine: Ready</div>
-        <div>⚡ Last: --ms</div>
-        <div>📊 Avg: --ms</div>
-        <div>✅ Success: --%</div>
+        <div>Engine: Ready</div>
+        <div>Last: --ms</div>
+        <div>Avg: --ms</div>
+        <div>Success: --%</div>
     </div>
     
     <div class="hotkeys">
-        <strong>⚡ Ultra-Fast Hotkeys:</strong><br>
-        B: Buy | S: Sell | F: Charts | Enter: Analyze | 1-4: Sell % | Y: Sync | L: Copy Logs | Esc: Clear
+        <strong>Ultra-Fast Hotkeys:</strong><br>
+        B: Buy | S: Sell | F: Charts | Enter: Analyze | Q: Amount | 1-4: Sell % | Y: Sync | L: Copy Logs | Esc: Clear
     </div>
 
     <script>
         const { ipcRenderer } = require('electron');
         
-        // 🔥 ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ МАКСИМАЛЬНОЙ СКОРОСТИ
+        // Global variables for maximum speed
         var currentAnalysis = null;
         var isAnalyzing = false;
         var isExecuting = false;
         var solPrice = 0;
         var ownedTokens = [];
         
-        // 📊 МЕТРИКИ ПРОИЗВОДИТЕЛЬНОСТИ
+        // Performance metrics
         var performanceMetrics = {
             totalTrades: 0,
             successfulTrades: 0,
@@ -276,33 +272,57 @@
         };
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔥 INITIALIZING ULTRA-FAST UI...');
+            console.log('Initializing Ultra-Fast UI...');
             
-            // Параллельная инициализация
+            // Parallel initialization
             Promise.all([
                 updateBalance(),
                 updateSolPrice(),
                 loadOwnedTokens(),
-                setupUltraFastHotkeys()
+                setupUltraFastHotkeys(),
+                setupSmartAmountInput()
             ]).then(() => {
-                log('✅ ULTRA-FAST UI READY', 'success');
+                log('Ultra-Fast UI Ready', 'success');
                 focusInput();
             });
             
-            // Быстрые обновления
+            // Fast updates
             setInterval(updateTradeValue, 3000);
             setInterval(updateOwnedTokensDisplay, 8000);
             setInterval(updatePerformanceDisplay, 2000);
         });
         
-        // 🎮 УЛЬТРА-БЫСТРЫЕ ГОРЯЧИЕ КЛАВИШИ
+        // Smart amount input with auto-comma
+        function setupSmartAmountInput() {
+            const amountInput = document.getElementById('amountInput');
+            
+            amountInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                
+                // Auto-comma logic: if user types "0" and field is empty or just "0"
+                if (value === '0' || (value.length === 1 && value === '0')) {
+                    // Add comma automatically for decimal input
+                    setTimeout(() => {
+                        if (e.target.value === '0') {
+                            e.target.value = '0.';
+                            // Move cursor to end
+                            e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+                        }
+                    }, 50);
+                }
+            });
+            
+            log('Smart amount input configured', 'info');
+        }
+        
+        // Ultra-fast hotkeys
         function setupUltraFastHotkeys() {
             document.addEventListener('keydown', function(e) {
                 if (e.target.tagName === 'INPUT') {
                     if (e.key === 'Enter' && e.target.id === 'tokenInput') {
                         e.preventDefault();
                         instantAnalyze();
-                        e.target.blur();
+                        e.target.blur(); // Exit input field for faster buy access
                     }
                     return;
                 }
@@ -325,6 +345,13 @@
                     case 'f':
                         e.preventDefault();
                         if (tokenMint) openCharts();
+                        break;
+                    case 'q':
+                        e.preventDefault();
+                        // Focus on amount input for quick position sizing
+                        const amountInput = document.getElementById('amountInput');
+                        amountInput.focus();
+                        amountInput.select();
                         break;
                     case 'Enter':
                         e.preventDefault();
@@ -361,31 +388,31 @@
                 }
             });
             
-            log('🎮 Ultra-fast hotkeys configured', 'info');
+            log('Ultra-fast hotkeys configured', 'info');
         }
         
-        // 🚀 МГНОВЕННАЯ ПОКУПКА (берет сумму из поля)
+        // Instant buy
         async function instantBuy() {
             if (isExecuting || isAnalyzing) {
-                log('⚠️ Another operation in progress', 'warning');
+                log('Another operation in progress', 'warning');
                 return;
             }
             
             const tokenMint = document.getElementById('tokenInput').value.trim();
             if (!tokenMint) {
-                log('❌ No token address provided', 'error');
+                log('No token address provided', 'error');
                 focusInput();
                 return;
             }
             
             if (!isValidSolanaAddress(tokenMint)) {
-                log('❌ Invalid token address', 'error');
+                log('Invalid token address', 'error');
                 return;
             }
             
             const amount = parseFloat(document.getElementById('amountInput').value) || 0.1;
             if (amount <= 0) {
-                log('❌ Invalid amount', 'error');
+                log('Invalid amount', 'error');
                 return;
             }
             
@@ -394,13 +421,11 @@
             const operationId = `buy_${startTime}`;
             
             try {
-                log(`🚀 [${operationId}] INSTANT BUY: ${amount} SOL → ${tokenMint.slice(0,8)}...`, 'info');
+                log(`[${operationId}] INSTANT BUY: ${amount} SOL → ${tokenMint.slice(0,8)}...`, 'info');
                 
-                // Визуальная обратная связь
-                setSpeedIndicator('⚡ Executing...', '#f59e0b');
+                setSpeedIndicator('Executing...', '#f59e0b');
                 showLoadingState();
                 
-                // Вызываем ultra-fast-buy handler
                 const result = await ipcRenderer.invoke('ultra-fast-buy', {
                     tokenMint,
                     amount,
@@ -410,14 +435,12 @@
                 const elapsed = Date.now() - startTime;
                 
                 if (result.success) {
-                    log(`✅ [${operationId}] BUY SUCCESS: ${elapsed}ms`, 'success');
-                    log(`   💰 Tokens: ${result.data.tokenAmount || 'Unknown'}`, 'success');
-                    log(`   📜 TX: ${result.data.signature}`, 'success');
+                    log(`[${operationId}] BUY SUCCESS: ${elapsed}ms`, 'success');
+                    log(`   Tokens: ${result.data.tokenAmount || 'Unknown'}`, 'success');
+                    log(`   TX: ${result.data.signature}`, 'success');
                     
-                    // Обновляем метрики
                     updatePerformanceMetrics(elapsed, true);
                     
-                    // Добавляем в портфель
                     if (result.data.tokenAmount) {
                         const tokenData = {
                             mint: tokenMint,
@@ -437,45 +460,42 @@
                     updateBalance();
                     clearInput();
                     
-                    // Открываем транзакцию
                     if (result.data.signature) {
                         ipcRenderer.invoke('open-transaction', result.data.signature);
                     }
                     
-                    setSpeedIndicator(`✅ ${elapsed}ms`, '#4ade80');
+                    setSpeedIndicator(`${elapsed}ms`, '#4ade80');
                     
                 } else {
-                    log(`💥 [${operationId}] BUY FAILED: ${elapsed}ms - ${result.error}`, 'error');
+                    log(`[${operationId}] BUY FAILED: ${elapsed}ms - ${result.error}`, 'error');
                     updatePerformanceMetrics(elapsed, false);
-                    setSpeedIndicator('❌ Failed', '#ef4444');
+                    setSpeedIndicator('Failed', '#ef4444');
                 }
                 
             } catch (error) {
                 const elapsed = Date.now() - startTime;
-                log(`💥 [${operationId}] BUY ERROR: ${elapsed}ms - ${error.message}`, 'error');
+                log(`[${operationId}] BUY ERROR: ${elapsed}ms - ${error.message}`, 'error');
                 updatePerformanceMetrics(elapsed, false);
-                setSpeedIndicator('💥 Error', '#ef4444');
+                setSpeedIndicator('Error', '#ef4444');
             } finally {
                 isExecuting = false;
                 hideLoadingState();
                 
-                // Возвращаем индикатор в готовность через 3 секунды
                 setTimeout(() => {
-                    setSpeedIndicator('⚡ Ready', '#4ade80');
+                    setSpeedIndicator('Ready', '#ccc');
                 }, 3000);
             }
         }
         
-        // 🎯 БЫСТРАЯ ПРОДАЖА (продает первый токен 100%)
+        // Quick sell (sell first token 100%)
         async function quickSell() {
             if (ownedTokens.length === 0) {
-                log('❌ No tokens to sell', 'warning');
+                log('No tokens to sell', 'warning');
                 return;
             }
             
             const confirmed = confirm(
-                `🛡️ QUICK SELL: 100% of ${ownedTokens[0].symbol}?\n` +
-                `This will use triple-protection for maximum safety.`
+                `QUICK SELL: 100% of ${ownedTokens[0].symbol}?`
             );
             
             if (!confirmed) return;
@@ -483,13 +503,13 @@
             sellToken(0, 100);
         }
         
-        // ⚡ МГНОВЕННЫЙ АНАЛИЗ
+        // Instant analysis
         async function instantAnalyze() {
             const tokenMint = document.getElementById('tokenInput').value.trim();
             if (!tokenMint || isAnalyzing || isExecuting) return;
             
             if (!isValidSolanaAddress(tokenMint)) {
-                log('❌ Invalid token address', 'error');
+                log('Invalid token address', 'error');
                 return;
             }
             
@@ -497,8 +517,8 @@
             const startTime = Date.now();
             
             try {
-                log(`⚡ Lightning analysis: ${tokenMint.slice(0,8)}...`, 'info');
-                setSpeedIndicator('🔍 Analyzing...', '#3b82f6');
+                log(`Lightning analysis: ${tokenMint.slice(0,8)}...`, 'info');
+                setSpeedIndicator('Analyzing...', '#3b82f6');
                 showLoadingState();
                 
                 const result = await ipcRenderer.invoke('lightning-analysis', tokenMint);
@@ -507,24 +527,24 @@
                 if (result.success) {
                     currentAnalysis = result.data;
                     displayAnalysis(result.data);
-                    log(`✅ Analysis completed: ${elapsed}ms | Score: ${result.data.score}/100`, 'success');
-                    setSpeedIndicator(`📊 ${elapsed}ms`, '#4ade80');
+                    log(`Analysis completed: ${elapsed}ms | Score: ${result.data.score}/100`, 'success');
+                    setSpeedIndicator(`${elapsed}ms`, '#4ade80');
                 } else {
-                    log(`💥 Analysis failed: ${elapsed}ms - ${result.error}`, 'error');
+                    log(`Analysis failed: ${elapsed}ms - ${result.error}`, 'error');
                     clearResults();
-                    setSpeedIndicator('❌ Failed', '#ef4444');
+                    setSpeedIndicator('Failed', '#ef4444');
                 }
                 
             } catch (error) {
-                log(`💥 Analysis error: ${error.message}`, 'error');
+                log(`Analysis error: ${error.message}`, 'error');
                 clearResults();
-                setSpeedIndicator('💥 Error', '#ef4444');
+                setSpeedIndicator('Error', '#ef4444');
             } finally {
                 isAnalyzing = false;
                 hideLoadingState();
                 
                 setTimeout(() => {
-                    setSpeedIndicator('⚡ Ready', '#4ade80');
+                    setSpeedIndicator('Ready', '#ccc');
                 }, 3000);
             }
         }
@@ -532,7 +552,7 @@
         function displayAnalysis(analysis) {
             const scoreClass = analysis.score >= 80 ? 'high' : analysis.score >= 60 ? 'medium' : 'low';
             const analysisClass = analysis.score >= 80 ? 'analysis' : analysis.score >= 60 ? 'analysis warning' : 'analysis danger';
-            const recommendation = analysis.score >= 80 ? '🚀 RECOMMENDED' : analysis.score >= 60 ? '⚠️ CAUTION' : '❌ HIGH RISK';
+            const recommendation = analysis.score >= 80 ? 'RECOMMENDED' : analysis.score >= 60 ? 'CAUTION' : 'HIGH RISK';
             const statusText = analysis.isHoneypot ? 'HONEYPOT' : 'CLEAN';
             const statusColor = analysis.isHoneypot ? 'color: #ef4444;' : 'color: #4ade80;';
             
@@ -545,7 +565,7 @@
                 warningsHtml += '</ul></div>';
             }
             
-            const buyButton = !analysis.isHoneypot ? '<button class="btn btn-buy" onclick="instantBuy()">[B] BUY</button>' : '';
+            const buyButton = !analysis.isHoneypot ? '<button class="btn" onclick="instantBuy()">[B] BUY</button>' : '';
             
             document.getElementById('results').innerHTML = 
                 '<div class="' + analysisClass + ' fade-in">' +
@@ -558,19 +578,19 @@
                     warningsHtml +
                     '<div class="actions">' +
                         buyButton +
-                        '<button class="btn btn-skip" onclick="clearAll()">[ESC] CLEAR</button>' +
-                        '<button class="btn btn-charts" onclick="openCharts()">[C] CHARTS</button>' +
+                        '<button class="btn" onclick="clearAll()">[ESC] CLEAR</button>' +
+                        '<button class="btn" onclick="openCharts()">[F] CHARTS</button>' +
                     '</div>' +
                 '</div>';
         }
         
-        // Функции из оригинального кода (адаптированные для скорости)
+        // Helper functions from original code (adapted for speed)
         function updateBalance() {
             ipcRenderer.invoke('get-balance').then(function(result) {
                 if (result.success) {
                     var solAmount = result.data.toFixed(4);
                     var usdValue = solPrice > 0 ? (result.data * solPrice).toFixed(0) : '0';
-                    document.getElementById('balance').textContent = '💰 ' + solAmount + ' SOL | ~$' + usdValue;
+                    document.getElementById('balance').textContent = solAmount + ' SOL | ~$' + usdValue;
                 }
             }).catch(function(error) {
                 log('Failed to update balance', 'warning');
@@ -699,8 +719,7 @@
             var token = ownedTokens[index];
             
             var confirmed = confirm(
-                '🛡️ SAFE SELL: ' + percentage + '% of ' + token.symbol + '?\n' +
-                'This will use triple-protection for maximum safety.'
+                'SAFE SELL: ' + percentage + '% of ' + token.symbol + '?'
             );
             
             if (!confirmed) return;
@@ -709,14 +728,14 @@
             const startTime = Date.now();
             const operationId = `sell_${startTime}`;
             
-            log('🛡️ [' + operationId + '] Checking real balance for ' + token.symbol + '...', 'info');
-            setSpeedIndicator('🛡️ Selling...', '#ef4444');
+            log('[' + operationId + '] Checking real balance for ' + token.symbol + '...', 'info');
+            setSpeedIndicator('Selling...', '#ef4444');
             
             ipcRenderer.invoke('get-token-balance', token.mint).then(function(balanceResult) {
                 if (!balanceResult.success) {
                     log('Failed to check balance: ' + balanceResult.error, 'error');
                     isExecuting = false;
-                    setSpeedIndicator('❌ Failed', '#ef4444');
+                    setSpeedIndicator('Failed', '#ef4444');
                     return;
                 }
                 
@@ -728,7 +747,7 @@
                     saveOwnedTokens();
                     updateOwnedTokensDisplay();
                     isExecuting = false;
-                    setSpeedIndicator('⚡ Ready', '#4ade80');
+                    setSpeedIndicator('Ready', '#ccc');
                     return;
                 }
                 
@@ -737,11 +756,11 @@
                 if (amountToSell <= 0) {
                     log('Amount too small to sell', 'warning');
                     isExecuting = false;
-                    setSpeedIndicator('⚡ Ready', '#4ade80');
+                    setSpeedIndicator('Ready', '#ccc');
                     return;
                 }
                 
-                log('🛡️ [' + operationId + '] Selling ' + amountToSell + ' tokens (' + percentage + '%)...', 'info');
+                log('[' + operationId + '] Selling ' + amountToSell + ' tokens (' + percentage + '%)...', 'info');
                 
                 ipcRenderer.invoke('ultra-safe-sell', {
                     tokenMint: token.mint,
@@ -751,7 +770,7 @@
                     const elapsed = Date.now() - startTime;
                     
                     if (result.success) {
-                        log('✅ [' + operationId + '] SELL SUCCESS: ' + elapsed + 'ms', 'success');
+                        log('[' + operationId + '] SELL SUCCESS: ' + elapsed + 'ms', 'success');
                         
                         if (percentage >= 100) {
                             ownedTokens.splice(index, 1);
@@ -768,29 +787,29 @@
                             ipcRenderer.invoke('open-transaction', result.data.signature);
                         }
                         
-                        setSpeedIndicator('✅ Sold', '#4ade80');
+                        setSpeedIndicator('Sold', '#4ade80');
                     } else {
-                        log('💥 [' + operationId + '] SELL FAILED: ' + elapsed + 'ms - ' + (result.error || 'Unknown error'), 'error');
-                        setSpeedIndicator('❌ Failed', '#ef4444');
+                        log('[' + operationId + '] SELL FAILED: ' + elapsed + 'ms - ' + (result.error || 'Unknown error'), 'error');
+                        setSpeedIndicator('Failed', '#ef4444');
                     }
                 }).catch(function(error) {
-                    log('💥 [' + operationId + '] Sell error: ' + error.message, 'error');
-                    setSpeedIndicator('💥 Error', '#ef4444');
+                    log('[' + operationId + '] Sell error: ' + error.message, 'error');
+                    setSpeedIndicator('Error', '#ef4444');
                 }).finally(function() {
                     isExecuting = false;
                     setTimeout(() => {
-                        setSpeedIndicator('⚡ Ready', '#4ade80');
+                        setSpeedIndicator('Ready', '#ccc');
                     }, 3000);
                 });
                 
             }).catch(function(error) {
                 log('Balance check failed: ' + error.message, 'error');
                 isExecuting = false;
-                setSpeedIndicator('💥 Error', '#ef4444');
+                setSpeedIndicator('Error', '#ef4444');
             });
         }
         
-        // 🎯 ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // Utility functions
         function isValidSolanaAddress(address) {
             return address && address.length >= 32 && address.length <= 44 && /^[A-Za-z0-9]+$/.test(address);
         }
@@ -834,10 +853,10 @@
                 : 0;
             
             stats.innerHTML = `
-                <div>🚀 Engine: Ready</div>
-                <div>⚡ Last: ${performanceMetrics.lastExecutionTime}ms</div>
-                <div>📊 Avg: ${Math.round(performanceMetrics.averageTime)}ms</div>
-                <div>✅ Success: ${successRate}%</div>
+                <div>Engine: Ready</div>
+                <div>Last: ${performanceMetrics.lastExecutionTime}ms</div>
+                <div>Avg: ${Math.round(performanceMetrics.averageTime)}ms</div>
+                <div>Success: ${successRate}%</div>
             `;
         }
         
@@ -846,21 +865,21 @@
             if (!tokenMint) return;
             
             ipcRenderer.invoke('open-charts', tokenMint);
-            log('📊 Charts opened', 'info');
+            log('Charts opened', 'info');
         }
         
         function clearAll() {
             document.getElementById('tokenInput').value = '';
             clearResults();
             focusInput();
-            log('🧹 Interface cleared', 'info');
+            log('Interface cleared', 'info');
         }
         
         function clearResults() {
             document.getElementById('results').innerHTML = 
-                '<div style="text-align: center; color: #6b7280; margin-top: 80px;">' +
-                '<p>🚀 Ultra-Fast Engine Ready</p>' +
-                '<p style="margin-top: 5px; font-size: 12px;">Paste token address and hit ENTER or use hotkeys B/S/F</p>' +
+                '<div style="text-align: center; color: #666; margin-top: 80px;">' +
+                '<p>Ultra-Fast Engine Ready</p>' +
+                '<p style="margin-top: 5px; font-size: 12px;">Paste token address and hit ENTER or use hotkeys</p>' +
                 '<p style="margin-top: 5px; font-size: 10px; color: #4ade80;">Target: &lt;1.5s execution time</p>' +
                 '</div>';
             currentAnalysis = null;
@@ -888,7 +907,7 @@
             logDiv.appendChild(entry);
             logDiv.scrollTop = logDiv.scrollHeight;
             
-            // Ограничиваем количество логов для производительности
+            // Limit logs for performance
             if (logDiv.children.length > 50) {
                 logDiv.removeChild(logDiv.firstChild);
             }
@@ -911,14 +930,14 @@
             });
         }
         
-        // Привязываем основные функции
+        // Bind main functions
         document.getElementById('analyzeBtn').onclick = instantAnalyze;
         
-        // Обновления с интервалами для производительности
+        // Updates with intervals for performance
         setInterval(updateBalance, 30000);
-        setInterval(updateSolPrice, 300000); // 5 минут
+        setInterval(updateSolPrice, 300000); // 5 minutes
         
-        // Автосинхронизация каждые 3 минуты
+        // Auto-sync every 3 minutes
         setInterval(function() {
             if (ownedTokens.length > 0 && !isExecuting && !isAnalyzing) {
                 syncPortfolio();
