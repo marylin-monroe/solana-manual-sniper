@@ -41,18 +41,36 @@ export class WalletService {
       const cleanKey = privateKeyString.replace(/\s+/g, '');
       console.log(`🔍 Debug: Clean key length: ${cleanKey.length}`);
 
-      if (cleanKey.startsWith('[') && cleanKey.endsWith(']')) {
+      // 🔥 ИСПРАВЛЕНО: Добавлена поддержка BASE58 формата
+      if (cleanKey.length >= 80 && cleanKey.length <= 90 && !cleanKey.includes(',') && !cleanKey.includes('[')) {
+        // BASE58 format (обычно 87-88 символов для Solana)
+        console.log(`🔍 Debug: Parsing as BASE58 format`);
+        try {
+          secretKey = bs58.decode(cleanKey);
+          console.log(`🔍 Debug: BASE58 decoded to ${secretKey.length} bytes`);
+        } catch (base58Error) {
+          throw new Error(`Invalid BASE58 private key: ${base58Error}`);
+        }
+      } else if (cleanKey.startsWith('[') && cleanKey.endsWith(']')) {
         // JSON array format: [1,2,3,...]
         console.log(`🔍 Debug: Parsing as JSON array`);
         const keyArray = JSON.parse(cleanKey);
         console.log(`🔍 Debug: Array length: ${keyArray.length}`);
         secretKey = new Uint8Array(keyArray);
-      } else {
-        // Предполагаем массив чисел через запятую
+      } else if (cleanKey.includes(',')) {
+        // Comma-separated numbers
         console.log(`🔍 Debug: Parsing as comma-separated numbers`);
-        const numbers = cleanKey.split(',').map(n => parseInt(n.trim()));
+        const numbers = cleanKey.split(',').map(n => {
+          const num = parseInt(n.trim());
+          if (isNaN(num)) {
+            throw new Error(`Invalid number in private key: "${n.trim()}"`);
+          }
+          return num;
+        });
         console.log(`🔍 Debug: Numbers array length: ${numbers.length}`);
         secretKey = new Uint8Array(numbers);
+      } else {
+        throw new Error(`Unrecognized private key format. Expected: BASE58 (87-88 chars), JSON array [1,2,3...], or comma-separated numbers`);
       }
 
       console.log(`🔍 Debug: Final secret key size: ${secretKey.length} bytes`);
@@ -69,9 +87,8 @@ export class WalletService {
       }
 
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new SniperError(
-        'Failed to load wallet keypair. Check PRIVATE_KEY format in .env',
+        `Failed to load wallet keypair: ${error instanceof Error ? error.message : 'Unknown error'}. Supported formats: BASE58, JSON array [1,2,3...], comma-separated numbers`,
         ErrorCodes.WALLET_ERROR,
         error
       );
