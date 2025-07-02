@@ -196,8 +196,8 @@
         <button class="hotkey-btn" onclick="instantBuy()" title="B - Quick Buy">
             [B] BUY
         </button>
-        <button class="hotkey-btn" onclick="quickSell()" title="S - Quick Sell">
-            [S] SELL
+        <button class="hotkey-btn" onclick="clearAll()" title="S - Skip/Clear">
+            [S] SKIP
         </button>
         <button class="hotkey-btn" onclick="openCharts()" title="F - Open Charts">
             [F] CHARTS
@@ -235,7 +235,7 @@
     <div class="log" id="log">
         <div class="log-entry info">[SYSTEM] Ultra-Fast Sniper ready. Target execution: &lt;1.5s</div>
         <div class="log-entry success">[ENGINE] All services preloaded and optimized</div>
-        <div class="log-entry info">[HOTKEYS] B=Buy | S=Sell | F=Charts | Enter=Analyze | Q=Amount | 1-4=Sell%</div>
+        <div class="log-entry info">[HOTKEYS] B=Buy | S=Skip | F=Charts | Enter=Analyze | Q=Amount | 1-4=Sell%</div>
     </div>
     
     <!-- Performance Stats -->
@@ -248,7 +248,7 @@
     
     <div class="hotkeys">
         <strong>Ultra-Fast Hotkeys:</strong><br>
-        B: Buy | S: Sell | F: Charts | Enter: Analyze | Q: Amount | 1-4: Sell % | Y: Sync | L: Copy Logs | Esc: Clear
+        B: Buy | S: Skip | F: Charts | Enter: Analyze | Q: Amount | 1-4: Sell % | Y: Sync | L: Copy Logs
     </div>
 
     <script>
@@ -349,11 +349,7 @@
                         break;
                     case 's':
                         e.preventDefault();
-                        if (ownedTokens.length > 0) {
-                            quickSell();
-                        } else {
-                            log('No tokens to sell', 'warning');
-                        }
+                        clearAll(); // S = SKIP/CLEAR
                         break;
                     case 'f':
                         e.preventDefault();
@@ -369,10 +365,6 @@
                     case 'Enter':
                         e.preventDefault();
                         if (tokenMint) instantAnalyze();
-                        break;
-                    case 'Escape':
-                        e.preventDefault();
-                        clearAll();
                         break;
                     case 'y':
                         e.preventDefault();
@@ -591,7 +583,7 @@
                     warningsHtml +
                     '<div class="actions">' +
                         buyButton +
-                        '<button class="btn" onclick="clearAll()">[ESC] CLEAR</button>' +
+                        '<button class="btn" onclick="clearAll()">[S] SKIP</button>' +
                         '<button class="btn" onclick="openCharts()">[F] CHARTS</button>' +
                     '</div>' +
                 '</div>';
@@ -886,7 +878,7 @@
             document.getElementById('tokenInput').value = '';
             clearResults();
             focusInput();
-            log('Interface cleared', 'info');
+            log('Skipped - interface cleared', 'info');
         }
         
         function clearResults() {
