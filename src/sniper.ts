@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// src/sniper.ts
+// src/sniper.ts bb44BASE58
 // Главный файл Solana Manual Sniper
 
 import chalk from 'chalk';
