@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// src/snipeService.ts
+// src/snipeService.ts +html
 // 🚀 ИНТЕРАКТИВНЫЙ СНАЙПЕР СЕРВИС - загружается один раз, работает мгновенно
 
 import chalk from 'chalk';
